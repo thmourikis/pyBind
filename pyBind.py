@@ -1,11 +1,10 @@
 import sys
 import os
 import stat
-from tempfile import mkstemp
-from shutil import move
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QMessageBox, QApplication, QDesktopWidget, QFileDialog
+import subprocess
 
 class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -63,8 +62,11 @@ class MyWindow(QtWidgets.QMainWindow):
         st = os.stat(new_config[:-4])
         os.chmod(new_config[:-4], st.st_mode | stat.S_IEXEC)
 
-
-
+        cmd = '{} -p {} -a HLA-A02:01,HLA-A02:02 > {}'.format(
+            netConfigFile, os.getcwd() + "/resources/netMHCpan-3.0/test/test.pep",
+            os.getcwd() + "/resources/netMHCpan-3.0/test/test.pep.myout2")
+        output = subprocess.call('{}'.format(cmd), shell=True)
+        #print(str(output).split("\n"))
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())
