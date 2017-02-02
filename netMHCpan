@@ -11,13 +11,13 @@
 ###############################################################################
 
 # full path to the NetMHCpan 3.0 directory (mandatory)
-setenv NMHOME /Users/athanasiosmourikis/pyBind/resources/netMHCpan-3.0
+setenv NMHOME	/Users/athanasiosmourikis/Downloads/netMHCpan-3.0
 
 # determine where to store temporary files (must be writable to all users)
 #setenv	TMPDIR $NMHOME/tmp
 
 if ( ${?TMPDIR} == 0 ) then
-	setenv TMPDIR /Users/athanasiosmourikis/pyBind/scratch
+	setenv TMPDIR  /Users/athanasiosmourikis/scratch
 endif
 
 # determine platform (do not change this unless you don't have 'uname'!)
