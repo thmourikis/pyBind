@@ -44,18 +44,19 @@ class MyWindow(QtWidgets.QMainWindow):
             msg.deleteLater()
         else:
             home = expanduser("~")
-            print(self.inputPath)
-            print(self.outPath)
+            results_dir = None
             ## Input file always wins
             if self.inputPath is not None:
                 if self.outPath is None:
                     if not os.path.exists(home+"/.pyBind_out"):
                         os.mkdir(home+"/.pyBind_out")
                     copyfile(self.inputPath, home+"/.pyBind_out/input.fasta")
+                    results_dir = home+"/.pyBind_out"
                 else:
                     if not os.path.exists(self.outPath+"/.pyBind_out"):
                         os.mkdir(self.outPath+"/.pyBind_out")
                     copyfile(self.inputPath, self.outPath+"/.pyBind_out/input.fasta")
+                    results_dir = self.outPath+"/.pyBind_out"
             elif self.inputPath is None:
                 if self.outPath is None:
                     if not os.path.exists(home+"/.pyBind_out"):
@@ -63,24 +64,40 @@ class MyWindow(QtWidgets.QMainWindow):
                     infile = open(home+"/.pyBind_out"+"/input.fasta", "w")
                     infile.write(self.inputText.toPlainText())
                     infile.close()
+                    results_dir = home+"/.pyBind_out"
                 else:
                     if not os.path.exists(self.outPath+"/.pyBind_out"):
                         os.mkdir(self.outPath+"/.pyBind_out")
                     infile = open(self.outPath+"/.pyBind_out"+"/input.fasta", "w")
                     infile.write(self.inputText.toPlainText())
                     infile.close()
+                    results_dir = self.outPath+"/.pyBind_out"
 
             ## Get rest of parameters
             hlas = self.inputHLAallele.selectedItems()
             hlas = [x.text() for x in hlas]
-            print(hlas)
+            print()
             mers = self.inputMers.selectedItems()
             mers = [x.text() for x in mers]
             pattern = re.compile(r'\d')
             mers = ",".join(["".join(pattern.findall(x)) for x in mers])
-            print(mers)
-            seq = self.inputText.toPlainText()
-            print(seq)
+
+            ## Print a message if mers of hlas missing
+            if len(hlas)==0:
+                hlas = "HLA-A02:01"
+            if mers=="":
+                mers = "8"
+
+            msg = QtWidgets.QMessageBox(self)
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setWindowTitle('Input warning')
+            msg.setText('Unspecified parameters')
+            #msg.informativeText('kmers or HLAs unselected and set to default values')
+            ok = msg.addButton(
+                'OK', QtWidgets.QMessageBox.AcceptRole)
+            msg.setDefaultButton(ok)
+            msg.exec_()
+            msg.deleteLater()
 
 
             ## After taking all parameters I need to update the configuration script of netMHCpan
@@ -110,7 +127,7 @@ class MyWindow(QtWidgets.QMainWindow):
 
             ## run job in chunks - pseudo-parallel
             threads=3
-            chunk_cut = 2
+            chunk_cut = 100
             chunks = math.ceil(len(hlas)/chunk_cut)
 
             pids = []
@@ -122,7 +139,7 @@ class MyWindow(QtWidgets.QMainWindow):
                     netConfigFile, os.getcwd() + "/resources/netMHCpan-3.0/test/test.pep",
                                    hlasToRun)
                 command = cmd.split()
-                output_fn = 'netMHCpan.myout' + str(i)
+                output_fn = results_dir + '/netMHCpan.myout' + str(i)
                 commands.append((command, output_fn))
 
             for i in range(0, threads):
