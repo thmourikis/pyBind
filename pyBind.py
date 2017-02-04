@@ -8,6 +8,7 @@ import subprocess
 import math
 from os.path import expanduser
 import time
+import re
 
 class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -41,12 +42,18 @@ class MyWindow(QtWidgets.QMainWindow):
             msg.exec_()
             msg.deleteLater()
         else:
+
+
+
+
             home = expanduser("~")
             hlas = self.inputHLAallele.selectedItems()
             hlas = [x.text() for x in hlas]
             print(hlas)
             mers = self.inputMers.selectedItems()
             mers = [x.text() for x in mers]
+            pattern = re.compile(r'\d')
+            mers = ",".join(["".join(pattern.findall(x)) for x in mers])
             print(mers)
             seq = self.inputText.toPlainText()
             print(seq)
