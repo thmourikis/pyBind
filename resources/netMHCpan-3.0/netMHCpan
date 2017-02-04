@@ -17,7 +17,7 @@ setenv NMHOME /Users/athanasiosmourikis/pyBind/resources/netMHCpan-3.0
 #setenv	TMPDIR $NMHOME/tmp
 
 if ( ${?TMPDIR} == 0 ) then
-	setenv TMPDIR /Users/athanasiosmourikis/pyBind/scratch
+	setenv TMPDIR /Users/athanasiosmourikis/scratch
 endif
 
 # determine platform (do not change this unless you don't have 'uname'!)
