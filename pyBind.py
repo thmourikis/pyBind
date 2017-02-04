@@ -9,6 +9,7 @@ import math
 from os.path import expanduser
 import time
 import re
+from shutil import copyfile
 
 class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -42,11 +43,34 @@ class MyWindow(QtWidgets.QMainWindow):
             msg.exec_()
             msg.deleteLater()
         else:
-
-
-
-
             home = expanduser("~")
+            print(self.inputPath)
+            print(self.outPath)
+            ## Input file always wins
+            if self.inputPath is not None:
+                if self.outPath is None:
+                    if not os.path.exists(home+"/.pyBind_out"):
+                        os.mkdir(home+"/.pyBind_out")
+                    copyfile(self.inputPath, home+"/.pyBind_out/input.fasta")
+                else:
+                    if not os.path.exists(self.outPath+"/.pyBind_out"):
+                        os.mkdir(self.outPath+"/.pyBind_out")
+                    copyfile(self.inputPath, self.outPath+"/.pyBind_out/input.fasta")
+            elif self.inputPath is None:
+                if self.outPath is None:
+                    if not os.path.exists(home+"/.pyBind_out"):
+                        os.mkdir(home+"/.pyBind_out")
+                    infile = open(home+"/.pyBind_out"+"/input.fasta", "w")
+                    infile.write(self.inputText.toPlainText())
+                    infile.close()
+                else:
+                    if not os.path.exists(self.outPath+"/.pyBind_out"):
+                        os.mkdir(self.outPath+"/.pyBind_out")
+                    infile = open(self.outPath+"/.pyBind_out"+"/input.fasta", "w")
+                    infile.write(self.inputText.toPlainText())
+                    infile.close()
+
+            ## Get rest of parameters
             hlas = self.inputHLAallele.selectedItems()
             hlas = [x.text() for x in hlas]
             print(hlas)
@@ -155,12 +179,12 @@ class MyWindow(QtWidgets.QMainWindow):
     def BrowseInput(self):
         fname = QFileDialog.getOpenFileName()
         self.inputFileTag.setText(str(fname[0].split("/")[-1]))
-        self.inputPath = str(fname[0].split("/")[-1])
+        self.inputPath = str(fname[0])
 
     def BrowseOutput(self):
         dirname = QFileDialog.getExistingDirectory()
         self.outputFileTag.setText(dirname)
-        self.inputPath = str(dirname)
+        self.outPath = str(dirname)
 
     ## Method to center the window in the desktop screen
     def center(self):
