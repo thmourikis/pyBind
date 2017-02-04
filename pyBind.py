@@ -19,7 +19,8 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def initUI(self):
 
-        self.inputFile.clicked.connect(self.Browse)
+        self.inputFile.clicked.connect(self.BrowseInput)
+        self.outputFile.clicked.connect(self.BrowseOutput)
 
         ## Set HLA alleles
         self.inputHLACategory.activated.connect(self.get_HLA_alleles)
@@ -29,86 +30,95 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def runNetMHCpan(self):
 
-        ##Print a message that the run stated
+        if self.inputText.toPlainText()=="" and self.inputPath is None:
+            msg = QtWidgets.QMessageBox(self)
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setWindowTitle('Input warning')
+            msg.setText('Please specify input sequence')
+            ok = msg.addButton(
+                'OK', QtWidgets.QMessageBox.AcceptRole)
+            msg.setDefaultButton(ok)
+            msg.exec_()
+            msg.deleteLater()
+        else:
+            home = expanduser("~")
+            hlas = self.inputHLAallele.selectedItems()
+            hlas = [x.text() for x in hlas]
+            print(hlas)
+            mers = self.inputMers.selectedItems()
+            mers = [x.text() for x in mers]
+            print(mers)
+            seq = self.inputText.toPlainText()
+            print(seq)
 
-        home = expanduser("~")
-        hlas = self.inputHLAallele.selectedItems()
-        hlas = [x.text() for x in hlas]
-        print(hlas)
-        mers = self.inputMers.selectedItems()
-        mers = [x.text() for x in mers]
-        print(mers)
-        seq = self.inputText.toPlainText()
-        print(seq)
 
+            ## After taking all parameters I need to update the configuration script of netMHCpan
+            netConfigFile = os.getcwd() + "/resources/netMHCpan-3.0/netMHCpan"
+            new_config = os.getcwd() + "/resources/netMHCpan-3.0/netMHCpan_new"
 
-        ## After taking all parameters I need to update the configuration script of netMHCpan
-        netConfigFile = os.getcwd() + "/resources/netMHCpan-3.0/netMHCpan"
-        new_config = os.getcwd() + "/resources/netMHCpan-3.0/netMHCpan_new"
+            if not os.path.exists(home+"/scratch"):
+                os.makedirs(home+"/scratch")
 
-        if not os.path.exists(home+"/scratch"):
-            os.makedirs(home+"/scratch")
+            with open(new_config, 'w') as new_file:
+                with open(netConfigFile) as old_file:
+                    for line in old_file:
+                        if "setenv NMHOME" in line:
+                            line = "setenv NMHOME " + os.getcwd() + "/resources/netMHCpan-3.0\n"
+                            new_file.write(line)
+                        elif "setenv TMPDIR" in line:
+                            line = "\tsetenv TMPDIR " + home + "/scratch\n"
+                            new_file.write(line)
+                        else:
+                            new_file.write(line)
+            ## Clean up
+            os.remove(netConfigFile)
+            os.rename(new_config, new_config[:-4])
+            ## And make it executable
+            st = os.stat(new_config[:-4])
+            os.chmod(new_config[:-4], st.st_mode | stat.S_IEXEC)
 
-        with open(new_config, 'w') as new_file:
-            with open(netConfigFile) as old_file:
-                for line in old_file:
-                    if "setenv NMHOME" in line:
-                        line = "setenv NMHOME " + os.getcwd() + "/resources/netMHCpan-3.0\n"
-                        new_file.write(line)
-                    elif "setenv TMPDIR" in line:
-                        line = "\tsetenv TMPDIR " + home + "/scratch\n"
-                        new_file.write(line)
-                    else:
-                        new_file.write(line)
-        ## Clean up
-        os.remove(netConfigFile)
-        os.rename(new_config, new_config[:-4])
-        ## And make it executable
-        st = os.stat(new_config[:-4])
-        os.chmod(new_config[:-4], st.st_mode | stat.S_IEXEC)
+            ## run job in chunks - pseudo-parallel
+            threads=3
+            chunk_cut = 2
+            chunks = math.ceil(len(hlas)/chunk_cut)
 
-        ## run job in chunks - pseudo-parallel
-        threads=3
-        chunk_cut = 2
-        chunks = math.ceil(len(hlas)/chunk_cut)
+            pids = []
+            completed_output_handles = []
+            commands = []
+            for i in range(0, chunks):
+                hlasToRun = ",".join(hlas[(i*chunk_cut):(i*chunk_cut)+chunk_cut])
+                cmd = '{} -p {} -a {}'.format(
+                    netConfigFile, os.getcwd() + "/resources/netMHCpan-3.0/test/test.pep",
+                                   hlasToRun)
+                command = cmd.split()
+                output_fn = 'netMHCpan.myout' + str(i)
+                commands.append((command, output_fn))
 
-        pids = []
-        completed_output_handles = []
-        commands = []
-        for i in range(0, chunks):
-            hlasToRun = ",".join(hlas[(i*chunk_cut):(i*chunk_cut)+chunk_cut])
-            cmd = '{} -p {} -a {}'.format(
-                netConfigFile, os.getcwd() + "/resources/netMHCpan-3.0/test/test.pep",
-                               hlasToRun)
-            command = cmd.split()
-            output_fn = 'netMHCpan.myout' + str(i)
-            commands.append((command, output_fn))
+            for i in range(0, threads):
+                if len(commands) != 0:  ## still stuff left to execute:
+                    new_command, new_output_fn = commands.pop(0)
+                    new_output_handle = open(new_output_fn, 'w')
+                    new_pid = subprocess.Popen(new_command, stdout=new_output_handle, stderr=subprocess.PIPE)
+                    pids.append((new_pid, new_output_handle))
 
-        for i in range(0, threads):
-            if len(commands) != 0:  ## still stuff left to execute:
-                new_command, new_output_fn = commands.pop(0)
-                new_output_handle = open(new_output_fn, 'w')
-                new_pid = subprocess.Popen(new_command, stdout=new_output_handle, stderr=subprocess.PIPE)
-                pids.append((new_pid, new_output_handle))
+            while len(pids) != 0:
+                time.sleep(1)
+                for (pid, output_handle) in pids:  ## check running processes
+                    pid_return = pid.poll()
+                    ## poll returns None until the process finishes, then it returns the exit code
+                    if (pid_return != 0 and pid_return != None):
+                        exit("Error: exonerate failed (code %d): %s" % (pid_return, pid.stderr))
+                    elif pid_return == 0:  ## Successful completion
+                        output_handle.close()
+                        completed_output_handles.append(output_handle)
+                        pids.remove((pid, output_handle))
+                        if len(commands) != 0:  ## still stuff left to execute:
+                            new_command, new_output_fn = commands.pop(0)
+                            new_output_handle = open(new_output_fn, 'w')
+                            new_pid = subprocess.Popen(new_command, stdout=new_output_handle, stderr=subprocess.PIPE)
+                            pids.append((new_pid, new_output_handle))
 
-        while len(pids) != 0:
-            time.sleep(1)
-            for (pid, output_handle) in pids:  ## check running processes
-                pid_return = pid.poll()
-                ## poll returns None until the process finishes, then it returns the exit code
-                if (pid_return != 0 and pid_return != None):
-                    exit("Error: exonerate failed (code %d): %s" % (pid_return, pid.stderr))
-                elif pid_return == 0:  ## Successful completion
-                    output_handle.close()
-                    completed_output_handles.append(output_handle)
-                    pids.remove((pid, output_handle))
-                    if len(commands) != 0:  ## still stuff left to execute:
-                        new_command, new_output_fn = commands.pop(0)
-                        new_output_handle = open(new_output_fn, 'w')
-                        new_pid = subprocess.Popen(new_command, stdout=new_output_handle, stderr=subprocess.PIPE)
-                        pids.append((new_pid, new_output_handle))
-
-        assert (len(completed_output_handles) == chunks)
+            assert (len(completed_output_handles) == chunks)
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())
@@ -135,10 +145,15 @@ class MyWindow(QtWidgets.QMainWindow):
             self.inputHLAallele.addItems(hla_alleles)
 
 
-    def Browse(self):
+    def BrowseInput(self):
         fname = QFileDialog.getOpenFileName()
-        print(fname)
-        #self.ui.lineEdit.setText(fname)
+        self.inputFileTag.setText(str(fname[0].split("/")[-1]))
+        self.inputPath = str(fname[0].split("/")[-1])
+
+    def BrowseOutput(self):
+        dirname = QFileDialog.getExistingDirectory()
+        self.outputFileTag.setText(dirname)
+        self.inputPath = str(dirname)
 
     ## Method to center the window in the desktop screen
     def center(self):
