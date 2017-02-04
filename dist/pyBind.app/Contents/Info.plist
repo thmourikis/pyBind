@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict><key>CFBundleName</key>
+<string>pyBind</string>
+<key>CFBundleInfoDictionaryVersion</key>
+<string>6.0</string>
+<key>CFBundlePackageType</key>
+<string>APPL</string>
+<key>CFBundleDisplayName</key>
+<string>pyBind</string>
+<key>CFBundleIconFile</key>
+<string>icon-windowed.icns</string>
+<key>LSBackgroundOnly</key>
+<string>0</string>
+<key>CFBundleShortVersionString</key>
+<string>0.0.0</string>
+<key>CFBundleIdentifier</key>
+<string>pyBind</string>
+<key>CFBundleExecutable</key>
+<string>MacOS/pyBind</string>
+</dict>
+</plist>
