@@ -14,7 +14,12 @@ from shutil import copyfile
 class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
-        uic.loadUi('mainwindow.ui', self)
+        # determine if application is a script file or frozen exe
+        if getattr(sys, 'frozen', False):
+            self.application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            self.application_path = os.path.dirname(__file__)
+        uic.loadUi(self.application_path + '/mainwindow.ui', self)
         self.inputPath = None
         self.outPath = None
         self.initUI()
@@ -101,8 +106,8 @@ class MyWindow(QtWidgets.QMainWindow):
 
 
             ## After taking all parameters I need to update the configuration script of netMHCpan
-            netConfigFile = os.getcwd() + "/resources/netMHCpan-3.0/netMHCpan"
-            new_config = os.getcwd() + "/resources/netMHCpan-3.0/netMHCpan_new"
+            netConfigFile = self.application_path + "/data/netMHCpan-3.0/netMHCpan"
+            new_config = self.application_path + "/data/netMHCpan-3.0/netMHCpan_new"
 
             if not os.path.exists(home+"/scratch"):
                 os.makedirs(home+"/scratch")
@@ -111,7 +116,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 with open(netConfigFile) as old_file:
                     for line in old_file:
                         if "setenv NMHOME" in line:
-                            line = "setenv NMHOME " + os.getcwd() + "/resources/netMHCpan-3.0\n"
+                            line = "setenv NMHOME " + self.application_path + "/data/netMHCpan-3.0\n"
                             new_file.write(line)
                         elif "setenv TMPDIR" in line:
                             line = "\tsetenv TMPDIR " + home + "/scratch\n"
@@ -136,7 +141,7 @@ class MyWindow(QtWidgets.QMainWindow):
             for i in range(0, chunks):
                 hlasToRun = ",".join(hlas[(i*chunk_cut):(i*chunk_cut)+chunk_cut])
                 cmd = '{} -p {} -a {}'.format(
-                    netConfigFile, os.getcwd() + "/resources/netMHCpan-3.0/test/test.pep",
+                    netConfigFile, self.application_path + "/data/netMHCpan-3.0/test/test.pep",
                                    hlasToRun)
                 command = cmd.split()
                 output_fn = results_dir + '/netMHCpan.myout' + str(i)
@@ -170,8 +175,7 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())
-        own_path = os.getcwd()
-        hla_alleles = [line.strip() for line in open(own_path+"/resources/hla_alleles.txt", "r")]
+        hla_alleles = [line.strip() for line in open(self.application_path+"/data/hla_alleles.txt", "r")]
         ##Depending on the user's selection show HLA alleles
         if hla_cat=="All HLAs":
             self.inputHLAallele.addItems(hla_alleles)
