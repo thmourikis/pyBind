@@ -6,10 +6,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QMessageBox, QApplication, QDesktopWidget, QFileDialog
 import subprocess
 import math
-from os.path import expanduser
+from os import listdir
+from os.path import expanduser, isfile, join
 import time
 import re
 from shutil import copyfile
+from subprocess import check_output
 
 class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -138,13 +140,19 @@ class MyWindow(QtWidgets.QMainWindow):
             pids = []
             completed_output_handles = []
             commands = []
+
+            if self.outFileName.toPlainText()=="":
+                outFileName = "pyBind.myout"
+            else:
+                outFileName = self.outFileName.toPlainText() + ".myout"
+
             for i in range(0, chunks):
                 hlasToRun = ",".join(hlas[(i*chunk_cut):(i*chunk_cut)+chunk_cut])
                 cmd = '{} -p {} -a {}'.format(
                     netConfigFile, self.application_path + "/data/netMHCpan-3.0/test/test.pep",
                                    hlasToRun)
                 command = cmd.split()
-                output_fn = results_dir + '/netMHCpan.myout' + str(i)
+                output_fn = results_dir + '/' + outFileName + str(i)
                 commands.append((command, output_fn))
 
             for i in range(0, threads):
@@ -172,6 +180,15 @@ class MyWindow(QtWidgets.QMainWindow):
                             pids.append((new_pid, new_output_handle))
 
             assert (len(completed_output_handles) == chunks)
+
+            ## Grep files to get the output
+            tb_head = check_output('grep \'^  Pos\' '+results_dir+"/"+outFileName+'* | head -n 1', shell=True)
+            tb_head = re.sub(' +', '\t', str(tb_head))
+            tb = check_output('grep \'^    \' ' + results_dir + "/" + outFileName + '*', shell=True)
+            tb = re.sub(' +', '\t', str(tb))
+
+            ## Write the output
+            with open(self.outPath+"/"+self.outFileName)
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())

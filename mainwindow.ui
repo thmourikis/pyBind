@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>796</height>
+    <height>828</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
          <x>0</x>
          <y>0</y>
          <width>674</width>
-         <height>749</height>
+         <height>781</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -55,127 +55,124 @@
             <string>Normal mode</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="12" column="0">
-             <widget class="QLabel" name="label_12">
+            <item row="1" column="2" colspan="2">
+             <widget class="QComboBox" name="inputType">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <item>
+               <property name="text">
+                <string>Fasta</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Peptide</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="13" column="1">
+             <widget class="QDoubleSpinBox" name="thresholdWeak">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="singleStep">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="value">
+               <double>2.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="QDoubleSpinBox" name="thresholdStrong">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="singleStep">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="1" colspan="2">
+             <widget class="QLabel" name="outputFileTag">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
               <property name="text">
-               <string>Threshold for strong binder: % Rank</string>
+               <string>no file selected</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="0" colspan="5">
-             <widget class="QLabel" name="label_14">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
+            <item row="9" column="0">
+             <widget class="QComboBox" name="inputHLACategory">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-              <property name="text">
-               <string>Peptide length (you may select multiple lengths)</string>
-              </property>
+              <item>
+               <property name="text">
+                <string>All HLAs</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>HLA-A</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>HLA-B</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>HLA-C</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>HLA-E</string>
+               </property>
+              </item>
              </widget>
             </item>
-            <item row="2" column="0" colspan="5">
-             <widget class="QLabel" name="label_17">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Paste a single sequence or several sequencies in FASTA format into the field below:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="15" column="0" colspan="5">
-             <widget class="QLabel" name="label_20">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Please select where do you want to save the results</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QLabel" name="label_5">
+            <item row="5" column="1" colspan="3">
+             <widget class="QLabel" name="inputFileTag">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
               <property name="text">
-               <string>Type of input</string>
+               <string>no file selected</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="5">
-             <widget class="QPlainTextEdit" name="inputText"/>
-            </item>
-            <item row="13" column="0">
-             <widget class="QLabel" name="label_13">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Threshold for weak binder: % Rank</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" colspan="5">
-             <widget class="QLabel" name="label_19">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>or submit a file a file in Fasta format directly from your local disk:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QPushButton" name="inputFile">
+            <item row="16" column="0">
+             <widget class="QPushButton" name="outputFile">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -193,69 +190,8 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_16">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>14</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Submission</string>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0" colspan="2">
-             <widget class="QListWidget" name="inputHLAallele">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="baseSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::ExtendedSelection</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="17" column="3" colspan="2">
-             <widget class="QPushButton" name="runbtn">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="baseSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-               </font>
-              </property>
-              <property name="text">
-               <string>Run netMHCpan3.0</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_15">
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_18">
               <property name="font">
                <font>
                 <family>Arial</family>
@@ -264,7 +200,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Select loci</string>
+               <string>Select allele</string>
               </property>
              </widget>
             </item>
@@ -312,8 +248,8 @@
               </item>
              </widget>
             </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_18">
+            <item row="8" column="0">
+             <widget class="QLabel" name="label_15">
               <property name="font">
                <font>
                 <family>Arial</family>
@@ -322,12 +258,73 @@
                </font>
               </property>
               <property name="text">
-               <string>Select allele</string>
+               <string>Select loci</string>
               </property>
              </widget>
             </item>
-            <item row="16" column="0">
-             <widget class="QPushButton" name="outputFile">
+            <item row="18" column="3" colspan="2">
+             <widget class="QPushButton" name="runbtn">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="baseSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Arial</family>
+               </font>
+              </property>
+              <property name="text">
+               <string>Run netMHCpan3.0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0" colspan="2">
+             <widget class="QListWidget" name="inputHLAallele">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="baseSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_16">
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <pointsize>14</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Submission</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QPushButton" name="inputFile">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -345,120 +342,142 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1" colspan="3">
-             <widget class="QLabel" name="inputFileTag">
+            <item row="4" column="0" colspan="5">
+             <widget class="QLabel" name="label_19">
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>or submit a file a file in Fasta format directly from your local disk:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="0">
+             <widget class="QLabel" name="label_13">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string>no file selected</string>
+               <string>Threshold for weak binder: % Rank</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
-             <widget class="QComboBox" name="inputHLACategory">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <item>
-               <property name="text">
-                <string>All HLAs</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>HLA-A</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>HLA-B</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>HLA-C</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>HLA-E</string>
-               </property>
-              </item>
-             </widget>
+            <item row="3" column="0" colspan="5">
+             <widget class="QPlainTextEdit" name="inputText"/>
             </item>
-            <item row="16" column="1" colspan="2">
-             <widget class="QLabel" name="outputFileTag">
+            <item row="1" column="0" colspan="2">
+             <widget class="QLabel" name="label_5">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string>no file selected</string>
+               <string>Type of input</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="1">
-             <widget class="QDoubleSpinBox" name="thresholdStrong">
-              <property name="enabled">
-               <bool>true</bool>
+            <item row="15" column="0" colspan="5">
+             <widget class="QLabel" name="label_20">
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
               </property>
+              <property name="text">
+               <string>Select the output directory and the name of the output file</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="5">
+             <widget class="QLabel" name="label_17">
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Paste a single sequence or several sequencies in FASTA format into the field below:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0" colspan="5">
+             <widget class="QLabel" name="label_14">
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Peptide length (you may select multiple lengths)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>Arial</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Threshold for strong binder: % Rank</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="0">
+             <widget class="QPlainTextEdit" name="outFileName">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="singleStep">
-               <double>0.010000000000000</double>
+              <property name="maximumSize">
+               <size>
+                <width>300</width>
+                <height>25</height>
+               </size>
               </property>
-              <property name="value">
-               <double>0.500000000000000</double>
+              <property name="plainText">
+               <string>pyBind.myout.tsv</string>
               </property>
-             </widget>
-            </item>
-            <item row="13" column="1">
-             <widget class="QDoubleSpinBox" name="thresholdWeak">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="singleStep">
-               <double>0.010000000000000</double>
-              </property>
-              <property name="value">
-               <double>2.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2" colspan="2">
-             <widget class="QComboBox" name="inputType">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <item>
-               <property name="text">
-                <string>Fasta</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Peptide</string>
-               </property>
-              </item>
              </widget>
             </item>
            </layout>
