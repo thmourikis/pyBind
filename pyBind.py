@@ -183,12 +183,17 @@ class MyWindow(QtWidgets.QMainWindow):
 
             ## Grep files to get the output
             tb_head = check_output('grep \'^  Pos\' '+results_dir+"/"+outFileName+'* | head -n 1', shell=True)
-            tb_head = re.sub(' +', '\t', str(tb_head))
+            tb_head = re.sub(' +', '\t', tb_head.decode('UTF-8')).strip()
+            tb_head = tb_head.strip()+ "\n"
             tb = check_output('grep \'^    \' ' + results_dir + "/" + outFileName + '*', shell=True)
-            tb = re.sub(' +', '\t', str(tb))
+            tb = re.sub(' +', '\t', tb.decode('UTF-8')).split("\n")
+            tb = [x.strip()+"\n" for x in tb]
 
             ## Write the output
-            with open(self.outPath+"/"+self.outFileName)
+            with open(self.outPath+"/"+self.outFileName.toPlainText(), "w") as of:
+                of.write(tb_head)
+                for line in tb:
+                    of.write(line)
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())
