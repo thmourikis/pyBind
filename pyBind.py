@@ -10,7 +10,7 @@ from os import listdir
 from os.path import expanduser, isfile, join
 import time
 import re
-from shutil import copyfile
+from shutil import copyfile, rmtree
 from subprocess import check_output
 
 class MyWindow(QtWidgets.QMainWindow):
@@ -194,6 +194,8 @@ class MyWindow(QtWidgets.QMainWindow):
                 of.write(tb_head)
                 for line in tb:
                     of.write(line)
+            ## Clean temporary directory
+            shutil.rmtree(results_dir)
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())
