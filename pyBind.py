@@ -24,6 +24,7 @@ class MyWindow(QtWidgets.QMainWindow):
         uic.loadUi(self.application_path + '/mainwindow.ui', self)
         self.inputPath = None
         self.outPath = None
+        #self.progressBar.setValue(0)
         self.initUI()
 
     def initUI(self):
@@ -36,6 +37,7 @@ class MyWindow(QtWidgets.QMainWindow):
 
         #self.inputHLAallele.itemSelectionChanged.connect(self.get_selected_alleles)
         self.runbtn.clicked.connect(self.runNetMHCpan)
+
 
     def runNetMHCpan(self):
 
@@ -52,6 +54,7 @@ class MyWindow(QtWidgets.QMainWindow):
         else:
             home = expanduser("~")
             results_dir = None
+            print(self.inputPath)
             ## Input file always wins
             if self.inputPath is not None:
                 if self.outPath is None:
@@ -92,19 +95,28 @@ class MyWindow(QtWidgets.QMainWindow):
             ## Print a message if mers of hlas missing
             if len(hlas)==0:
                 hlas = "HLA-A02:01"
+                msg = QtWidgets.QMessageBox(self)
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setWindowTitle('Input warning')
+                msg.setText('HLAs not selected. Running with default HLA-A02:01')
+                ok = msg.addButton(
+                    'OK', QtWidgets.QMessageBox.AcceptRole)
+                msg.setDefaultButton(ok)
+                msg.exec_()
+                msg.deleteLater()
             if mers=="":
                 mers = "8"
+                msg = QtWidgets.QMessageBox(self)
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setWindowTitle('Input warning')
+                msg.setText('kmers not selected. Running with default 8mer')
+                ok = msg.addButton(
+                    'OK', QtWidgets.QMessageBox.AcceptRole)
+                msg.setDefaultButton(ok)
+                msg.exec_()
+                msg.deleteLater()
 
-            msg = QtWidgets.QMessageBox(self)
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setWindowTitle('Input warning')
-            msg.setText('Unspecified parameters')
-            #msg.informativeText('kmers or HLAs unselected and set to default values')
-            ok = msg.addButton(
-                'OK', QtWidgets.QMessageBox.AcceptRole)
-            msg.setDefaultButton(ok)
-            msg.exec_()
-            msg.deleteLater()
+
 
 
             ## After taking all parameters I need to update the configuration script of netMHCpan
@@ -133,8 +145,8 @@ class MyWindow(QtWidgets.QMainWindow):
             os.chmod(new_config[:-4], st.st_mode | stat.S_IEXEC)
 
             ## run job in chunks - pseudo-parallel
-            threads=3
-            chunk_cut = 100
+            threads=2
+            chunk_cut = 2
             chunks = math.ceil(len(hlas)/chunk_cut)
 
             pids = []
@@ -145,6 +157,18 @@ class MyWindow(QtWidgets.QMainWindow):
                 outFileName = "pyBind.myout"
             else:
                 outFileName = self.outFileName.toPlainText() + ".myout"
+
+            ## Print a message box when starting
+            msg = QtWidgets.QMessageBox(self)
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setWindowTitle('Running report')
+            msg.setText('netMHCpan is running...')
+            ok = msg.addButton(
+                'OK', QtWidgets.QMessageBox.AcceptRole)
+            msg.setDefaultButton(ok)
+            msg.exec_()
+            msg.deleteLater()
+
 
             for i in range(0, chunks):
                 hlasToRun = ",".join(hlas[(i*chunk_cut):(i*chunk_cut)+chunk_cut])
@@ -168,7 +192,7 @@ class MyWindow(QtWidgets.QMainWindow):
                     pid_return = pid.poll()
                     ## poll returns None until the process finishes, then it returns the exit code
                     if (pid_return != 0 and pid_return != None):
-                        exit("Error: exonerate failed (code %d): %s" % (pid_return, pid.stderr))
+                        exit("Error: run failed (code %d): %s" % (pid_return, pid.stderr))
                     elif pid_return == 0:  ## Successful completion
                         output_handle.close()
                         completed_output_handles.append(output_handle)
@@ -183,11 +207,11 @@ class MyWindow(QtWidgets.QMainWindow):
 
             ## Grep files to get the output
             tb_head = check_output('grep \'^  Pos\' '+results_dir+"/"+outFileName+'* | head -n 1', shell=True)
-            tb_head = re.sub(' +', '\t', tb_head.decode('UTF-8')).strip()
+            tb_head = "\t".join(re.sub(' +', '\t', tb_head.decode('UTF-8')).strip().split("\t")[1:])
             tb_head = tb_head.strip()+ "\n"
             tb = check_output('grep \'^    \' ' + results_dir + "/" + outFileName + '*', shell=True)
             tb = re.sub(' +', '\t', tb.decode('UTF-8')).split("\n")
-            tb = [x.strip()+"\n" for x in tb]
+            tb = ["\t".join(x.strip().split("\t")[1:])+"\n" for x in tb]
 
             ## Write the output
             with open(self.outPath+"/"+self.outFileName.toPlainText(), "w") as of:
@@ -195,7 +219,17 @@ class MyWindow(QtWidgets.QMainWindow):
                 for line in tb:
                     of.write(line)
             ## Clean temporary directory
-            shutil.rmtree(results_dir)
+            rmtree(results_dir)
+
+            msg = QtWidgets.QMessageBox(self)
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setWindowTitle('Running report')
+            msg.setText('Done! Results stored in '+self.outPath+"/"+self.outFileName.toPlainText())
+            ok = msg.addButton(
+                'OK', QtWidgets.QMessageBox.AcceptRole)
+            msg.setDefaultButton(ok)
+            msg.exec_()
+            msg.deleteLater()
 
     def get_HLA_alleles(self):
         hla_cat = str(self.inputHLACategory.currentText())
@@ -219,6 +253,8 @@ class MyWindow(QtWidgets.QMainWindow):
             hla_alleles = filter(lambda x: 'HLA-E' in x, hla_alleles)
             self.inputHLAallele.clear()
             self.inputHLAallele.addItems(hla_alleles)
+
+
 
 
     def BrowseInput(self):
