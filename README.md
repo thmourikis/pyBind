@@ -1,6 +1,6 @@
 ## Synopsis
 
-pyBind is a Qt/python application that runs NetMHCpan-3.0 algorithm locally.
+pyBind is a Qt/python application that runs NetMHCpan-3.0 algorithm locally. Please note that pyBind is in development phase and it is not ready for full usage yet. If you want to use/test pyBind, please contact me.
 
 ![Alt text](/images/gui_screenshot.png?raw=true "pyBind GUI")
 
